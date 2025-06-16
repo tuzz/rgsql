@@ -2,9 +2,13 @@
 
 <img alt="rgSQL logo" align=right width=159 height=187 src="https://technicaldeft.com/rgsql_logo_small.png"/> rgSQL is a SQL database server that **YOU** get to build from scratch.
 
+[More about rgSQL and why it was created](https://technicaldeft.com/posts/rgsql-a-test-suite-for-database-engines).
+
 This project contains a test runner and 200+ test cases to guide you through creating a database server. The tests check your implementation can parse, type check and evaluate SQL statements. 
 
 The test suite starts with simpler statements such as `SELECT 1;` and builds up to more complex queries that can evaluate expressions, join tables and run aggregate functions on grouped data.
+
+
 
 ### Using
 
