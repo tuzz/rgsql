@@ -13,5 +13,8 @@ else
 fi
 
 # Add any compilation or linting commands after this line
+cargo check
+cargo clippy
+cargo build --release
 
 $PYTHON_CMD -m test_runner.main "$@"
