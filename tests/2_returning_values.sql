@@ -62,3 +62,10 @@ col_1, col_2
 SELECT 1 AS 1a;
 --- returns error:
 parsing_error
+
+--- supports quoted identifiers
+SELECT 56 AS "fifty six!", FALSE AS "🚫", 0 AS "this is ""nothing""?";
+--- returns:
+56, FALSE, 0
+--- with columns:
+"fifty six!", "🚫", "this is ""nothing""?"

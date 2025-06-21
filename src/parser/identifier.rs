@@ -7,6 +7,12 @@ pub struct Identifier {
 
 impl Identifier {
     pub fn parser<'a>() -> impl Parser<'a, &'a str, Identifier, RichError<'a>> {
-        ident().map(|s: &str| Identifier { name: s.to_string() })
+        let unquoted = ident().map(|s: &str| s.to_string());
+
+        let non_quotes = any().filter(|c: &char| *c != '"');
+        let escaped_quote = just("\"\"").to('"');
+        let quoted = choice((non_quotes, escaped_quote)).repeated().collect().padded_by(just('"'));
+
+        choice((unquoted, quoted)).map(|name| Identifier { name })
     }
 }
