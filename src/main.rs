@@ -1,3 +1,8 @@
+mod parser;
+
+use chumsky::prelude::*;
+use chumsky::text::{int, whitespace};
+use parser::*;
 use std::net::TcpListener;
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -12,6 +17,10 @@ fn main() {
         let mut reader = BufReader::new(&stream);
 
         while reader.read_until(0, &mut buffer).is_ok() {
+            let message = String::from_utf8_lossy(&buffer[..buffer.len() - 1]);
+            let query = Query::parser().parse(&message);
+            println!("{query:?}");
+
             writer.write_all("\0".as_bytes()).unwrap();
         }
     }
