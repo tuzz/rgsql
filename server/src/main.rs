@@ -28,10 +28,16 @@ fn main() {
             let parse_result = Query::parser().parse(&message);
 
             let query_result = match parse_result.into_result() {
-                Ok(query) => {
-                    let rows = vec![query.select.select_list.literals];
-                    let column_names = query.select.select_list.aliases;
+                Ok(Query::Select(select)) => {
+                    let rows = vec![select.select_list.literals];
+                    let column_names = select.select_list.aliases;
                     QueryResult::Ok(SuccessResult { rows, column_names })
+                },
+                Ok(Query::CreateTable(_create_table)) => {
+                    QueryResult::Ok(SuccessResult { rows: vec![], column_names: vec![] })
+                },
+                Ok(Query::DropTable(_drop_table)) => {
+                    QueryResult::Ok(SuccessResult { rows: vec![], column_names: vec![] })
                 },
                 Err(errors) => {
                     let error_type = "parsing_error".to_string();
