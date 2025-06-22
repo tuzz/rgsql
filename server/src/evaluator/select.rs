@@ -9,7 +9,7 @@ impl Evaluate for Select {
 
         for expression in self.select_list.expressions {
             let column_values = expression.evaluate(database).unwrap();
-            columns_values.push(column_values);
+            columns_values.extend(column_values);
         }
 
         let num_rows = columns_values.iter()
@@ -31,13 +31,17 @@ impl Evaluate for Select {
 }
 
 fn column_names(select: &Select) -> Vec<String> {
-    select.select_list.aliases.iter().zip(&select.select_list.expressions).map(|(alias, expression)| {
+    let mut column_names = vec![];
+
+    for (alias, expression) in select.select_list.aliases.iter().zip(&select.select_list.expressions) {
         if let Some(alias) = alias {
-            alias.name.clone()
+            column_names.push(alias.name.clone());
         } else if let Expression::Projection(p) = expression {
-            p.column_identifier.name.clone()
+            column_names.extend(p.column_identifiers.iter().map(|identifier| identifier.name.clone()));
         } else {
-            "".to_string()
+            column_names.push("".to_string());
         }
-    }).collect()
+    }
+
+    column_names
 }

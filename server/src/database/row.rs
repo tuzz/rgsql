@@ -5,7 +5,7 @@ pub struct Row {
     values: Vec<RowValue>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Debug)]
 pub enum RowValue {
     Integer(i64),
     Boolean(bool),
@@ -30,7 +30,20 @@ impl Row {
         self.values.push(value);
     }
 
+    pub fn get_value(&self, column_index: usize) -> &RowValue {
+        &self.values[column_index]
+    }
+
     pub fn set_value(&mut self, column_index: usize, value: RowValue) {
         self.values[column_index] = value;
+    }
+}
+
+impl RowValue {
+    pub fn from(value: Literal) -> Self {
+        match value {
+            Literal::Integer(value) => RowValue::Integer(value),
+            Literal::Boolean(value) => RowValue::Boolean(value),
+        }
     }
 }
