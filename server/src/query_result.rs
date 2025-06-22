@@ -18,6 +18,15 @@ pub struct ErrorResult {
     pub error_message: String,
 }
 
+impl QueryResult {
+    pub fn from_parse_errors<'a>(errors: &[Rich<'a, char>]) -> Self {
+        let error_type = "parsing_error".to_string();
+        let error_message = errors.iter().map(|e| e.to_string()).collect::<Vec<_>>().join(", ");
+
+        Self::Error(ErrorResult { error_type, error_message })
+    }
+}
+
 impl Serialize for QueryResult {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let mut map = serializer.serialize_map(Some(3))?;
