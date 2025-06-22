@@ -8,8 +8,8 @@ pub enum QueryResult {
 
 #[derive(Debug)]
 pub struct SuccessResult {
-    pub rows: Vec<Vec<Literal>>,
-    pub column_names: Vec<Identifier>,
+    pub rows: Vec<Vec<RowValue>>,
+    pub column_names: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -48,17 +48,11 @@ impl Serialize for QueryResult {
     }
 }
 
-impl Serialize for Literal {
+impl Serialize for RowValue {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         match self {
-            Literal::Boolean(value) => serializer.serialize_bool(*value),
-            Literal::Integer(value) => serializer.serialize_i64(*value),
+            RowValue::Boolean(value) => serializer.serialize_bool(*value),
+            RowValue::Integer(value) => serializer.serialize_i64(*value),
         }
-    }
-}
-
-impl Serialize for Identifier {
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.serialize_str(&self.name)
     }
 }

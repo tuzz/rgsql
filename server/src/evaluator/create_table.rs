@@ -1,7 +1,9 @@
 use crate::*;
 
 impl Evaluate for CreateTable {
-    fn evaluate(self, database: &mut Database) -> QueryResult {
+    type Output = QueryResult;
+
+    fn evaluate(self, database: &mut Database) -> Self::Output {
         let mut table = Table::new(self.identifier.name);
         let column_results = self.column_definitions.into_iter().map(|(identifier, data_type)| {
             table.add_column(identifier.name, ColumnType::from_data_type(data_type))

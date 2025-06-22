@@ -1,7 +1,9 @@
 use crate::*;
 
 impl Evaluate for DropTable {
-    fn evaluate(self, database: &mut Database) -> QueryResult {
+    type Output = QueryResult;
+
+    fn evaluate(self, database: &mut Database) -> Self::Output {
         let table_index = database.table_index(&self.identifier.name);
 
         match (table_index, self.if_exists) {

@@ -2,39 +2,71 @@ use crate::*;
 
 pub struct Table {
     name: String,
-    metadata: Vec<(String, ColumnType)>,
-    rows: Vec<Vec<RowValue>>,
+    column_names: Vec<String>,
+    column_types: Vec<ColumnType>,
+    rows: Vec<Row>,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ColumnType {
     Integer,
     Boolean,
 }
 
-pub enum RowValue {
-    Integer(i64),
-    Boolean(bool),
-}
-
 impl Table {
     pub fn new(name: String) -> Self {
-        Self { name, metadata: vec![], rows: vec![] }
+        Self { name, column_names: vec![], column_types: vec![], rows: vec![] }
     }
 
     pub fn name(&self) -> &str {
         &self.name
     }
 
-    pub fn add_column(&mut self, name: String, column_type: ColumnType) {
-        self.metadata.push((name, column_type));
+    pub fn column_names(&self) -> &[String] {
+        &self.column_names
+    }
 
-        for row in &mut self.rows {
-            match &column_type {
-                ColumnType::Integer => row.push(RowValue::Integer(0)),
-                ColumnType::Boolean => row.push(RowValue::Boolean(false)),
+    pub fn column_types(&self) -> &[ColumnType] {
+        &self.column_types
+    }
+
+    pub fn rows(&self) -> &[Row] {
+        &self.rows
+    }
+
+    pub fn num_columns(&self) -> usize {
+        self.column_names.len()
+    }
+
+    pub fn num_rows(&self) -> usize {
+        self.rows.len()
+    }
+
+    pub fn column_index(&self, name: &str) -> Option<usize> {
+        self.column_names.iter().position(|n| n == name)
+    }
+
+    pub fn column_type(&self, column_index: usize) -> ColumnType {
+        self.column_types[column_index]
+    }
+
+    pub fn add_column(&mut self, name: String, column_type: ColumnType) -> Result<(), String> {
+        if self.column_names.iter().any(|n| n == &name) {
+            Err(format!("Column '{}' already exists in table '{}'", name, self.name))
+        } else {
+            self.column_names.push(name);
+            self.column_types.push(column_type);
+
+            for row in &mut self.rows {
+                row.add_value(column_type.default_row_value());
             }
+
+            Ok(())
         }
+    }
+
+    pub fn add_row(&mut self, row: Row) {
+        self.rows.push(row);
     }
 }
 
@@ -43,6 +75,21 @@ impl ColumnType {
         match data_type {
             DataType::Integer => ColumnType::Integer,
             DataType::Boolean => ColumnType::Boolean,
+        }
+    }
+
+    pub fn checked_row_value(&self, literal: Literal) -> Result<RowValue, String> {
+        match (self, &literal) {
+            (ColumnType::Integer, Literal::Integer(value)) => Ok(RowValue::Integer(*value)),
+            (ColumnType::Boolean, Literal::Boolean(value)) => Ok(RowValue::Boolean(*value)),
+            _ => Err(format!("{literal:?} is invalid for {self:?}")),
+        }
+    }
+
+    pub fn default_row_value(&self) -> RowValue {
+        match self {
+            ColumnType::Integer => RowValue::Integer(0),
+            ColumnType::Boolean => RowValue::Boolean(false),
         }
     }
 }

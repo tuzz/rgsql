@@ -5,6 +5,7 @@ pub enum Query {
     Select(Select),
     CreateTable(CreateTable),
     DropTable(DropTable),
+    InsertInto(InsertInto),
 }
 
 pub type RichError<'a> = extra::Err<Rich<'a, char>>;
@@ -15,6 +16,7 @@ impl Query {
             Select::parser().map(Query::Select),
             CreateTable::parser().map(Query::CreateTable),
             DropTable::parser().map(Query::DropTable),
+            InsertInto::parser().map(Query::InsertInto),
         )).then_ignore(just(';'))
     }
 }
