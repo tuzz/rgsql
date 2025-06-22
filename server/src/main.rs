@@ -1,3 +1,4 @@
+mod database;
 mod evaluator;
 mod parser;
 mod query_result;
@@ -6,6 +7,7 @@ use chumsky::prelude::*;
 use chumsky::text::{ident, whitespace};
 use serde::{Serialize, Serializer};
 use serde::ser::SerializeMap;
+use database::*;
 use evaluator::*;
 use parser::*;
 use query_result::*;
@@ -15,6 +17,7 @@ use std::io::{BufReader, BufWriter};
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:3003").unwrap();
+    let mut database = Database::new();
 
     for result in listener.incoming() {
         let stream = result.unwrap();
@@ -30,7 +33,7 @@ fn main() {
             let parse_result = Query::parser().parse(&message);
 
             let query_result = match parse_result.into_result() {
-                Ok(query) => query.evaluate(),
+                Ok(query) => query.evaluate(&mut database),
                 Err(errors) => QueryResult::from_parse_errors(&errors),
             };
 

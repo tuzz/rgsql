@@ -2,8 +2,8 @@ use crate::*;
 
 #[derive(Debug, Default)]
 pub struct CreateTable {
-    name: Identifier,
-    column_definitions: Vec<(Identifier, DataType)>,
+    pub identifier: Identifier,
+    pub column_definitions: Vec<(Identifier, DataType)>,
 }
 
 impl CreateTable {
@@ -14,7 +14,7 @@ impl CreateTable {
             .ignore_then(whitespace().at_least(1))
             .ignore_then(Identifier::parser())
             .then(Self::column_definitions().delimited_by(just('('), just(')')).padded())
-            .map(|(name, column_definitions)| Self { name, column_definitions })
+            .map(|(identifier, column_definitions)| Self { identifier, column_definitions })
     }
 
     fn column_definitions<'a>() -> impl Parser<'a, &'a str, Vec<(Identifier, DataType)>, RichError<'a>> {
