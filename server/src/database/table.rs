@@ -22,10 +22,6 @@ impl Table {
         &self.name
     }
 
-    pub fn column_names(&self) -> &[String] {
-        &self.column_names
-    }
-
     pub fn column_types(&self) -> &[ColumnType] {
         &self.column_types
     }
@@ -36,10 +32,6 @@ impl Table {
 
     pub fn num_columns(&self) -> usize {
         self.column_names.len()
-    }
-
-    pub fn num_rows(&self) -> usize {
-        self.rows.len()
     }
 
     pub fn column_index(&self, name: &str) -> Option<usize> {

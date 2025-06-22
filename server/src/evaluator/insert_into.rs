@@ -5,7 +5,7 @@ impl Evaluate for InsertInto {
 
     fn evaluate(self, database: &mut Database) -> Self::Output {
         let table_index = database.table_index(&self.identifier.name);
-        if let None = table_index {
+        if table_index.is_none() {
             let error_type = "validation_error".to_string();
             let error_message = format!("Table '{}' does not exist.", self.identifier.name);
             return QueryResult::Error(ErrorResult { error_type, error_message });
