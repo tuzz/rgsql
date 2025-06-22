@@ -7,7 +7,7 @@ pub enum Literal {
 }
 
 impl Literal {
-    pub fn parser<'a>() -> impl Parser<'a, &'a str, Literal, RichError<'a>> {
+    pub fn parser<'a>() -> impl Parser<'a, &'a str, Self, RichError<'a>> {
         choice((
             just("TRUE").to(Literal::Boolean(true)),
             just("FALSE").to(Literal::Boolean(false)),

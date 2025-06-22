@@ -6,7 +6,7 @@ pub struct Identifier {
 }
 
 impl Identifier {
-    pub fn parser<'a>() -> impl Parser<'a, &'a str, Identifier, RichError<'a>> {
+    pub fn parser<'a>() -> impl Parser<'a, &'a str, Self, RichError<'a>> {
         let unquoted = ident().map(|s: &str| s.to_string());
 
         let non_quotes = any().filter(|c: &char| *c != '"');

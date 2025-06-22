@@ -7,7 +7,7 @@ pub struct SelectList {
 }
 
 impl SelectList {
-    pub fn parser<'a>() -> impl Parser<'a, &'a str, SelectList, RichError<'a>> {
+    pub fn parser<'a>() -> impl Parser<'a, &'a str, Self, RichError<'a>> {
         Literal::parser()
             .then(Self::alias_parser())
             .separated_by(just(',').padded())

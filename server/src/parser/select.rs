@@ -6,7 +6,7 @@ pub struct Select {
 }
 
 impl Select {
-    pub fn parser<'a>() -> impl Parser<'a, &'a str, Select, RichError<'a>> {
+    pub fn parser<'a>() -> impl Parser<'a, &'a str, Self, RichError<'a>> {
         just("SELECT").ignore_then(choice((
             whitespace().at_least(1).ignore_then(SelectList::parser()),
             SelectList::parser().and_is(empty()),
