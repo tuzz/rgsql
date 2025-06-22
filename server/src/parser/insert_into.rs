@@ -21,7 +21,8 @@ impl InsertInto {
 
     fn values_list_parser<'a>() -> impl Parser<'a, &'a str, Vec<Vec<Literal>>, RichError<'a>> {
         Self::values_parser()
-            .separated_by(just(',').padded())
+            .padded()
+            .separated_by(just(','))
             .at_least(1)
             .collect()
     }
